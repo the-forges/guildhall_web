@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-// import 'package:web/web.dart' as web;
-import 'package:dio/dio.dart';
+import 'package:web/web.dart' as web;
 
 import '../profile/model.dart';
 
@@ -18,11 +18,10 @@ class Auth extends StatefulWidget {
 }
 
 class _AuthState extends State<Auth> {
-  final String _apiUrl = 'http://192.168.1.24:8000/api/';
+  final String _apiUrl = '${web.window.location.href}/api/';
   String? _challenge;
 
   _preauth() async {
-    // var url = web.window.location.href + "api/preauth";
     var url = "${_apiUrl}preauth";
     var resp = await Dio().get(url);
     setState(() {
@@ -31,21 +30,20 @@ class _AuthState extends State<Auth> {
     Timer.periodic(const Duration(seconds: 1), (timer) {
       var url = '${_apiUrl}authenticated/$_challenge';
       Dio().get(url).then((resp) {
-        Map<String, dynamic> data = resp.data.runtimeType == String
-            ? jsonDecode(resp.data)
-            : resp.data;
+        Map<String, dynamic> data =
+            resp.data.runtimeType == String ? jsonDecode(resp.data) : resp.data;
         if (data['user'] != null) {
           timer.cancel();
-          if (widget.callback != null) widget.callback!(Profile.fromJson(data['user']));
+          if (widget.callback != null) {
+            widget.callback!(Profile.fromJson(data['user']));
+          }
         }
-
       });
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _preauth();
   }
