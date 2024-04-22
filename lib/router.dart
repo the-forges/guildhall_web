@@ -6,8 +6,6 @@ import 'package:guildhall_app/auth/auth.dart';
 import 'package:guildhall_app/auth/state.dart' as appstate;
 import 'package:web/web.dart' as web;
 
-import 'auth/state.dart';
-
 final GoRouter router = GoRouter(
   routes: [
     GoRoute(
